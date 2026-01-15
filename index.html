@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 업무용 툴</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif; background-color: #f7f9fc; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h2 { text-align: center; color: #2c3e50; margin-bottom: 25px; }
+        
+        /* 입력 및 검색 스타일 */
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; box-sizing: border-box; margin-bottom: 10px; transition: 0.2s; }
+        input:focus, textarea:focus { border-color: #4a90e2; outline: none; }
+        textarea { height: 80px; resize: none; }
+        
+        .btn-add { width: 100%; background: #4a90e2; color: white; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-bottom: 30px; }
+        .btn-add:hover { background: #357abd; }
+
+        .search-wrapper { position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 10; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px; }
+
+        /* 리스트 스타일 */
+        .item { display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 10px; background: #fff; transition: 0.2s; }
+        .item:hover { border-color: #4a90e2; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        
+        .text-group { flex: 1; margin-right: 15px; overflow: hidden; }
+        .item-title { font-weight: bold; font-size: 16px; margin-bottom: 4px; color: #222; }
+        .item-content { font-size: 13px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .actions { display: flex; gap: 5px; }
+        .btn-copy { background: #eef4fb; color: #4a90e2; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-copy:hover { background: #dce9f6; }
+        .btn-del { background: #fff0f0; color: #e74c3c; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        
+        /* 알림 */
+        #toast { visibility: hidden; min-width: 200px; background-color: #333; color: #fff; text-align: center; border-radius: 30px; padding: 12px; position: fixed; z-index: 99; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        #toast.show { visibility: visible; animation: fadein 0.3s, fadeout 0.3s 2.0s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>⚡ 업무용 메시지 툴</h2>
+
+        <details style="margin-bottom: 20px; cursor: pointer;">
+            <summary style="color:#666; font-size:14px;">➕ 새 메시지 추가하기</summary>
+            <div style="margin-top: 10px;">
+                <input type="text" id="inTitle" placeholder="제목 (예: 인사말)">
+                <textarea id="inContent" placeholder="내용을 입력하세요"></textarea>
+                <button class="btn-add" onclick="addItem()">저장</button>
+            </div>
+        </details>
+
+        <div class="search-wrapper">
+            <input type="text" id="search" placeholder="🔍 검색어를 입력하세요..." style="margin-bottom:0;">
+        </div>
+
+        <div id="list"></div>
+    </div>
+    <div id="toast">복사 완료!</div>
+
+    <script>
+        let data = JSON.parse(localStorage.getItem('myMsgs') || '[]');
+
+        function save() { localStorage.setItem('myMsgs', JSON.stringify(data)); }
+        
+        function render(filter = '') {
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            data.forEach(item => {
+                if(item.t.includes(filter) || item.c.includes(filter)) {
+                    const div = document.createElement('div');
+                    div.className = 'item';
+                    div.innerHTML = `
+                        <div class="text-group">
+                            <div class="item-title">${item.t}</div>
+                            <div class="item-content">${item.c}</div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn-copy" onclick="copy('${item.id}')">복사</button>
+                            <button class="btn-del" onclick="del('${item.id}')">✕</button>
+                        </div>
+                    `;
+                    list.appendChild(div);
+                }
+            });
+        }
+
+        function addItem() {
+            const t = document.getElementById('inTitle').value;
+            const c = document.getElementById('inContent').value;
+            if(!t || !c) return alert('내용을 입력하세요');
+            data.unshift({ id: Date.now(), t, c });
+            save(); render();
+            document.getElementById('inTitle').value = '';
+            document.getElementById('inContent').value = '';
+        }
+
+        function del(id) {
+            if(confirm('삭제할까요?')) {
+                data = data.filter(i => i.id != id);
+                save(); render();
+            }
+        }
+
+        function copy(id) {
+            const item = data.find(i => i.id == id);
+            navigator.clipboard.writeText(item.c).then(() => {
+                const t = document.getElementById('toast');
+                t.className = 'show';
+                setTimeout(() => t.className = t.className.replace('show',''), 2000);
+            });
+        }
+
+        document.getElementById('search').addEventListener('input', e => render(e.target.value));
+        render(); // 초기 실행
+    </script>
+</body>
+</html>
