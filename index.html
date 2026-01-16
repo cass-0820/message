@@ -10,12 +10,44 @@
     <meta property="og:image" content="https://cass-0820.github.io/message/1.png">
 
     <style>
-        /* 기본 스타일 */
+        /* 기본 설정 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; color: #333; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-        h2 { text-align: center; color: #1a1a1a; margin-bottom: 15px; font-weight: 800; font-size: 22px; }
+        h2 { text-align: center; color: #1a1a1a; margin-bottom: 20px; font-weight: 800; font-size: 22px; }
         
-        /* 검색창 */
+        /* 공통 입력창/토글 스타일 */
+        details { border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 15px; background: #fff; overflow: hidden; }
+        summary { font-weight: 600; cursor: pointer; list-style: none; padding: 12px; font-size: 15px; background: #f8f9fa; transition: background 0.2s; display: flex; align-items: center; justify-content: space-between; }
+        summary:hover { background: #e9ecef; }
+        summary::after { content: "▼"; font-size: 12px; color: #999; margin-left: 10px; }
+        details[open] summary::after { content: "▲"; }
+        
+        /* 예약 문자 생성기 전용 스타일 */
+        .gen-details { border-color: #dce9f6; }
+        .gen-details summary { background: #eef4fb; color: #2c3e50; }
+        .gen-details summary:hover { background: #e3effa; }
+        
+        .gen-content { padding: 15px; background: #fff; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .input-row input { flex: 1; padding: 10px; border: 1px solid #ccdbe8; border-radius: 6px; font-size: 14px; margin: 0; }
+        input[type="datetime-local"] { font-family: inherit; color: #333; }
+
+        /* 미리보기 박스 */
+        .preview-box { 
+            background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 12px; 
+            margin-top: 10px; min-height: 100px; font-size: 13px; line-height: 1.6; color: #444; white-space: pre-wrap;
+        }
+        .btn-gen-copy { width: 100%; background: #4a90e2; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px; }
+        .btn-gen-copy:hover { background: #357abd; }
+
+        /* 직접 추가하기 전용 스타일 */
+        .manual-content { padding: 15px; }
+        .manual-content input, .manual-content textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; margin-bottom: 8px; }
+        .manual-content textarea { height: 80px; resize: none; }
+        .btn-add { width: 100%; background: #2c3e50; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; }
+        .btn-add:hover { background: #1a252f; }
+
+        /* 검색창 (Sticky) */
         .search-wrapper { position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 10; border-bottom: 2px solid #f0f0f0; margin-bottom: 15px; padding-top: 5px; }
         #search { margin: 0; background: #f8f9fa; border: none; padding: 12px; font-size: 15px; width: 100%; box-sizing: border-box; border-radius: 8px; }
         #search:focus { background: #fff; border: 1px solid #4a90e2; outline: none; }
@@ -43,75 +75,35 @@
         .copy-hint { font-size: 11px; color: #4a90e2; margin-top: 4px; opacity: 0; transition: opacity 0.2s; height: 0; overflow: hidden; }
         .item:hover .copy-hint { opacity: 1; height: auto; }
 
-        /* 하단 버튼 그룹 */
         .actions { display: flex; justify-content: flex-end; width: 100%; margin-top: 4px; }
         .btn-del { background: #fff; color: #ff6b6b; border: 1px solid #ffcccc; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; }
         .btn-del:hover { background: #fff0f0; }
 
-        /* =========================================
-           [NEW] 예약 문자 생성기 스타일
-           ========================================= */
-        .generator-box { 
-            background: #eef4fb; border-radius: 12px; padding: 15px; margin-top: 30px; border: 1px solid #dce9f6; 
-        }
-        .gen-title { font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #2c3e50; display: flex; align-items: center; gap: 5px; }
-        
-        .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
-        .input-row input { flex: 1; padding: 10px; border: 1px solid #ccdbe8; border-radius: 6px; font-size: 14px; margin: 0; }
-        
-        /* 날짜/시간 선택기 스타일 */
-        input[type="datetime-local"] { font-family: inherit; color: #333; }
-
-        /* 결과 미리보기 박스 */
-        .preview-box { 
-            background: white; border: 1px solid #ddd; border-radius: 8px; padding: 12px; 
-            margin-top: 10px; min-height: 100px; font-size: 13px; line-height: 1.5; color: #444; white-space: pre-wrap;
-        }
-        
-        .btn-gen-copy { width: 100%; background: #4a90e2; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px; }
-        .btn-gen-copy:hover { background: #357abd; }
-
-        /* ========================================= */
-
-        /* 기존 입력창 (접어두기) */
-        details { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-top: 15px; border: 1px solid #e9ecef; }
-        summary { color: #888; font-weight: 500; cursor: pointer; list-style: none; padding: 5px; font-size: 13px; text-align: center; }
-        summary:hover { color: #555; }
-        
         /* 알림 토스트 */
         #toast { visibility: hidden; min-width: 200px; background-color: rgba(33, 37, 41, 0.95); color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 99; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(4px); }
         #toast.show { visibility: visible; animation: popUp 0.3s, fadeOut 0.5s 2.0s; }
         @keyframes popUp { from {bottom: 0; opacity: 0; transform: translateX(-50%) scale(0.8);} to {bottom: 30px; opacity: 1; transform: translateX(-50%) scale(1);} }
         @keyframes fadeOut { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
-
     </style>
 </head>
 <body>
     <div class="container">
         <h2>🏥 병원 메시지</h2>
 
-        <div class="search-wrapper">
-            <input type="text" id="search" placeholder="🔍 검색 (약어, 진료과, 번호)...">
-        </div>
-
-        <div id="list"></div>
-
-        <div class="generator-box">
-            <div class="gen-title">📅 예약 문자 생성기</div>
-            
-            <div class="input-row">
-                <input type="datetime-local" id="resDate" onchange="updatePreview()">
-            </div>
-
-            <div class="input-row">
-                <input type="text" id="docName" placeholder="의사 이름 (예: 홍길동)" oninput="updatePreview()">
-                <input type="text" id="deptName" placeholder="진료과 (예: 소화기내과)" oninput="updatePreview()">
-            </div>
-            <div class="input-row">
-                <input type="number" id="deptNum" placeholder="전화번호 뒷자리 (예: 8234)" oninput="updatePreview()">
-            </div>
-
-            <div class="preview-box" id="previewArea">안녕하십니까? 포항성모병원입니다.
+        <details class="gen-details">
+            <summary>📅 예약 문자 생성기</summary>
+            <div class="gen-content">
+                <div class="input-row">
+                    <input type="datetime-local" id="resDate" onchange="updatePreview()">
+                </div>
+                <div class="input-row">
+                    <input type="text" id="docName" placeholder="의사 이름 (예: 홍길동)" oninput="updatePreview()">
+                    <input type="text" id="deptName" placeholder="진료과 (예: 소화기내과)" oninput="updatePreview()">
+                </div>
+                <div class="input-row">
+                    <input type="number" id="deptNum" placeholder="전화번호 뒷자리 (예: 8234)" oninput="updatePreview()">
+                </div>
+                <div class="preview-box" id="previewArea">안녕하십니까? 포항성모병원입니다.
 
 (날짜 시간)
 (의사 이름) 과장님 진료 예약입니다.
@@ -120,12 +112,19 @@
 진료과 사정에 따라 대기시간이 길어질 수도 있습니다.
 
 요양기관 본인확인 강화 제도에 따라 병원 진료 시 신분증을 지참하시기 바랍니다.</div>
+                <button class="btn-gen-copy" onclick="copyPreview()">생성된 문자 복사하기 📄</button>
+            </div>
+        </details>
 
-            <button class="btn-gen-copy" onclick="copyPreview()">생성된 문자 복사하기 📄</button>
+        <div class="search-wrapper">
+            <input type="text" id="search" placeholder="🔍 검색 (약어, 진료과, 번호)...">
         </div>
+
+        <div id="list"></div>
+
         <details>
-            <summary>➕ (구버전) 직접 텍스트 입력해서 추가하기</summary>
-            <div style="margin-top: 10px;">
+            <summary>➕ 직접 입력해서 추가하기</summary>
+            <div class="manual-content">
                 <input type="text" id="inTitle" placeholder="제목 (예: [내과] 휴진 안내)">
                 <textarea id="inContent" placeholder="내용을 입력하세요"></textarea>
                 <button class="btn-add" onclick="addItem()">저장하기</button>
@@ -136,17 +135,13 @@
     <div id="toast">✅ 복사되었습니다!</div>
 
     <script>
-        // =========================================
-        // [NEW] 예약 문자 생성 로직
-        // =========================================
+        // [예약 문자 생성 로직]
         function updatePreview() {
-            // 1. 입력값 가져오기
             const rawDate = document.getElementById('resDate').value;
             const doc = document.getElementById('docName').value || '(의사 이름)';
             const dept = document.getElementById('deptName').value || '(진료과)';
             const num = document.getElementById('deptNum').value || '(번호)';
 
-            // 2. 날짜 포맷팅 (YYYY-MM-DDTHH:mm -> YYYY년 MM월 DD일 HH:mm)
             let formattedDate = '(예약 일시)';
             if (rawDate) {
                 const d = new Date(rawDate);
@@ -158,7 +153,6 @@
                 formattedDate = `${year}년 ${month}월 ${day}일 ${hour}:${min}`;
             }
 
-            // 3. 템플릿 완성
             const template = `안녕하십니까? 포항성모병원입니다.
 
 ${formattedDate}
@@ -169,7 +163,6 @@ ${doc} 과장님 진료 예약입니다.
 
 요양기관 본인확인 강화 제도에 따라 병원 진료 시 신분증을 지참하시기 바랍니다.`;
 
-            // 4. 화면에 표시
             document.getElementById('previewArea').innerText = template;
         }
 
@@ -182,40 +175,15 @@ ${doc} 과장님 진료 예약입니다.
             });
         }
 
-        // =========================================
-        // 기존 스크립트 (리스트, 검색 등)
-        // =========================================
-        
-        // 1. 고정 템플릿
+        // [기존 리스트 로직]
         const fixedTemplates = [
-            {
-                id: 0,
-                t: "[양식] 전화번호 안내 (직접 입력)",
-                c: "안녕하세요.\n포항성모병원입니다.\n\n과 전화번호를 안내드립니다.\n\n☎ 과\n054-260-8\n\n궁금하신 사항은 전화로 문의해 주시기 바랍니다.\n\n감사합니다.^^"
-            },
-            {
-                id: 1,
-                t: "[안내] 셔틀버스 승차장 및 운행시간",
-                c: "안녕하세요.\n포항성모병원입니다.\n\n셔틀버스 승차장 및 운행시간을 안내드립니다.\n\n[승차장 위치]\n· 시외버스터미널 바로 앞 택시승강장\n· 길 건너편 그랜드애비뉴 건물 앞 도로변\n\n[운행시간]\n· 첫차 오전 8시 45분\n· 막차 오후 5시 15분\n30분 간격 운행\n\n※ 오후 1시 15분은 점심시간으로 셔틀버스가 운행되지 않습니다.\n\n이용에 참고 부탁드립니다.\n감사합니다. ^^"
-            },
-            {
-                id: 2,
-                t: "[안내] 간병회 전화번호 모음",
-                c: "안녕하세요.\n포항성모병원입니다.\n\n간병회 번호 안내드립니다.\n\n미소간병회 (010-8564-6946 / 010-9501-2460)\n더희망간병회 (010-8121-5105)\n대한간병회 (010-9188-1014)\n천사간병회 (010-4523-3211)\n녹색간병회 (010-5539-5451)\n나눔간병회 (010-5592-8689)"
-            },
-            {
-                id: 3,
-                t: "[안내] 업무시간 및 점심시간",
-                c: "안녕하세요.\n포항성모병원입니다.\n\n업무시간 및 점심시간을 안내드립니다.\n\n[업무시간]\n· 평일 : 오전 8시 30분 ~ 오후 5시 30분\n· 토요일 : 오전 8시 30분 ~ 오후 12시 30분\n(※ 일요일 휴무)\n\n[점심시간]\n오후 12시 30분 ~ 오후 1시 30분\n\n단, 진료과마다 업무 시간이 다르오니 \n반드시 전화로 문의 후 방문해 주시기 바랍니다.\n\n감사합니다. ^^"
-            },
-            {
-                id: 4,
-                t: "[안내] 병동/중환자실 면회시간",
-                c: "안녕하세요.\n포항성모병원입니다.\n\n병동 면회시간을 안내드립니다.\n\n[일반(통합)병동 면회시간]\n· 평일 : 오후 6시 ~ 8시\n· 주말/공휴일 : 오전 10시 ~ 12시, 오후 6시 ~ 8시\n\n[중환자실 면회시간]\n오전 11시 30분 ~ 12시\n\n[신생아실 면회시간]\n· 정상아 : 오전 10시 30분 ~ 10시 50분, 오후 7시 ~ 7시 20분\n· 입원환아 : 오후 2시 30분 ~ 3시\n\n감사합니다. ^^"
-            }
+            { id: 0, t: "[양식] 전화번호 안내 (직접 입력)", c: "안녕하세요.\n포항성모병원입니다.\n\n과 전화번호를 안내드립니다.\n\n☎ 과\n054-260-8\n\n궁금하신 사항은 전화로 문의해 주시기 바랍니다.\n\n감사합니다.^^" },
+            { id: 1, t: "[안내] 셔틀버스 승차장 및 운행시간", c: "안녕하세요.\n포항성모병원입니다.\n\n셔틀버스 승차장 및 운행시간을 안내드립니다.\n\n[승차장 위치]\n· 시외버스터미널 바로 앞 택시승강장\n· 길 건너편 그랜드애비뉴 건물 앞 도로변\n\n[운행시간]\n· 첫차 오전 8시 45분\n· 막차 오후 5시 15분\n30분 간격 운행\n\n※ 오후 1시 15분은 점심시간으로 셔틀버스가 운행되지 않습니다.\n\n이용에 참고 부탁드립니다.\n감사합니다. ^^" },
+            { id: 2, t: "[안내] 간병회 전화번호 모음", c: "안녕하세요.\n포항성모병원입니다.\n\n간병회 번호 안내드립니다.\n\n미소간병회 (010-8564-6946 / 010-9501-2460)\n더희망간병회 (010-8121-5105)\n대한간병회 (010-9188-1014)\n천사간병회 (010-4523-3211)\n녹색간병회 (010-5539-5451)\n나눔간병회 (010-5592-8689)" },
+            { id: 3, t: "[안내] 업무시간 및 점심시간", c: "안녕하세요.\n포항성모병원입니다.\n\n업무시간 및 점심시간을 안내드립니다.\n\n[업무시간]\n· 평일 : 오전 8시 30분 ~ 오후 5시 30분\n· 토요일 : 오전 8시 30분 ~ 오후 12시 30분\n(※ 일요일 휴무)\n\n[점심시간]\n오후 12시 30분 ~ 오후 1시 30분\n\n단, 진료과마다 업무 시간이 다르오니 \n반드시 전화로 문의 후 방문해 주시기 바랍니다.\n\n감사합니다. ^^" },
+            { id: 4, t: "[안내] 병동/중환자실 면회시간", c: "안녕하세요.\n포항성모병원입니다.\n\n병동 면회시간을 안내드립니다.\n\n[일반(통합)병동 면회시간]\n· 평일 : 오후 6시 ~ 8시\n· 주말/공휴일 : 오전 10시 ~ 12시, 오후 6시 ~ 8시\n\n[중환자실 면회시간]\n오전 11시 30분 ~ 12시\n\n[신생아실 면회시간]\n· 정상아 : 오전 10시 30분 ~ 10시 50분, 오후 7시 ~ 7시 20분\n· 입원환아 : 오후 2시 30분 ~ 3시\n\n감사합니다. ^^" }
         ];
 
-        // 2. 엑셀 데이터
         const deptData = [
             { "id": 10000, "t": "☎️[MG] 소화기내과 전화번호 안내 (8234)", "c": "안녕하세요.\n포항성모병원입니다.\n\n소화기내과 전화번호를 안내드립니다.\n\n☎ 소화기내과\n054-260-8234\n\n궁금하신 사항은 전화로 문의해 주시기 바랍니다.\n\n감사합니다.^^" },
             { "id": 10001, "t": "📍[MG] 소화기내과 위치 안내 (8234)", "c": "안녕하세요.\n포항성모병원입니다. \n\n소화기내과 위치 안내드립니다.\n\n2층에 위치해 있으며, 예약이 되어 있으신 경우에는 접수 없이 바로 소화기내과로 오시면 됩니다.\n예약이 되어 있지 않으신 경우에는 외래 접수 후 이동해 주시기 바랍니다.\n\n감사합니다.^^" },
@@ -285,7 +253,6 @@ ${doc} 과장님 진료 예약입니다.
                 item.c.toLowerCase().includes(keyword)
             );
 
-            // 핀 고정된 항목 상단 배치
             allData.sort((a, b) => {
                 const aPinned = pinnedIds.includes(a.id);
                 const bPinned = pinnedIds.includes(b.id);
@@ -321,12 +288,10 @@ ${doc} 과장님 진료 예약입니다.
             });
         }
 
-        // 토글 기능
         function toggleItem(event, btnElement) {
             event.stopPropagation();
             const textGroup = btnElement.parentElement.parentElement;
             const content = textGroup.querySelector('.item-content');
-            
             content.classList.toggle('expanded');
             btnElement.classList.toggle('open');
         }
