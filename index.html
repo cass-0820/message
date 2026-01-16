@@ -14,15 +14,34 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; color: #333; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
         
-        /* [수정됨] 제목 스타일: 클릭 가능하게 변경 */
+        /* 제목 스타일 (클릭 시 새로고침) */
         h2 { 
             text-align: center; color: #1a1a1a; margin-bottom: 20px; font-weight: 800; font-size: 22px; 
-            cursor: pointer; /* 손가락 모양 커서 */
-            transition: color 0.2s; /* 색상 변경 애니메이션 */
+            cursor: pointer; transition: color 0.2s; 
         }
-        h2:hover { color: #4a90e2; /* 마우스 올렸을 때 파란색 */ }
-        h2:active { transform: scale(0.98); /* 클릭했을 때 살짝 눌리는 효과 */ }
+        h2:hover { color: #4a90e2; }
+        h2:active { transform: scale(0.98); }
         
+        /* =========================================
+           🎁 이스터에그 (배경 이미지)
+           ========================================= */
+        body::after {
+            content: "";
+            position: fixed; /* 화면에 고정 */
+            bottom: 10px;    /* 바닥에서 10px 띄움 */
+            right: 10px;     /* 오른쪽에서 10px 띄움 */
+            width: 180px;    /* 이미지 크기 (조절 가능) */
+            height: 180px;
+            background-image: url('https://cass-0820.github.io/message/B1.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: bottom right;
+            opacity: 0.3;    /* 투명도 30% */
+            z-index: 5;      /* 컨텐츠 위에 뜨지만.. */
+            pointer-events: none; /* 클릭은 무시하고 통과시킴 (중요!) */
+        }
+        /* ========================================= */
+
         /* 공통 입력창/토글 스타일 */
         details { border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 10px; background: #fff; overflow: hidden; }
         summary { font-weight: 600; cursor: pointer; list-style: none; padding: 12px; font-size: 15px; background: #f8f9fa; transition: background 0.2s; display: flex; align-items: center; justify-content: space-between; }
