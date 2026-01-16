@@ -10,97 +10,74 @@
     <meta property="og:image" content="https://cass-0820.github.io/message/1.png">
 
     <style>
-        /* 기본 설정 */
+        /* 기본 스타일 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; color: #333; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
         h2 { text-align: center; color: #1a1a1a; margin-bottom: 15px; font-weight: 800; font-size: 22px; }
         
-        /* 검색창 (상단 고정 - 제목 바로 아래) */
+        /* 검색창 */
         .search-wrapper { position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 10; border-bottom: 2px solid #f0f0f0; margin-bottom: 15px; padding-top: 5px; }
         #search { margin: 0; background: #f8f9fa; border: none; padding: 12px; font-size: 15px; width: 100%; box-sizing: border-box; border-radius: 8px; }
         #search:focus { background: #fff; border: 1px solid #4a90e2; outline: none; }
 
-        /* 리스트 아이템 (카드) - 슬림형 */
-        .item { 
-            position: relative;
-            display: flex; 
-            flex-direction: column; 
-            padding: 12px 15px; 
-            border: 1px solid #eee; 
-            border-radius: 8px; 
-            margin-bottom: 8px; 
-            background: #fff; 
-            transition: all 0.2s; 
-        }
+        /* 리스트 아이템 */
+        .item { position: relative; display: flex; flex-direction: column; padding: 12px 15px; border: 1px solid #eee; border-radius: 8px; margin-bottom: 8px; background: #fff; transition: all 0.2s; }
         .item:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-color: #4a90e2; }
         .item.pinned { background-color: #fffde7; border-color: #ffe082; }
 
         /* 핀 버튼 */
-        .btn-pin {
-            position: absolute; top: 8px; right: 8px;
-            background: transparent; border: 1px solid #eee; border-radius: 50%;
-            width: 24px; height: 24px;
-            font-size: 12px; color: #ccc; 
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; z-index: 5; transition: 0.2s; padding: 0;
-        }
+        .btn-pin { position: absolute; top: 8px; right: 8px; background: transparent; border: 1px solid #eee; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; color: #ccc; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 5; transition: 0.2s; padding: 0; }
         .btn-pin:hover { background: #f5f5f5; color: #999; border-color: #ddd; }
         .btn-pin.active { background: #ffd43b; color: #333; border-color: #ffd43b; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
         /* 텍스트 영역 */
-        .text-group { 
-            width: 100%; margin-bottom: 0; cursor: pointer;
-            padding-right: 30px; box-sizing: border-box; 
-            border-radius: 6px; padding: 4px;
-        }
+        .text-group { width: 100%; margin-bottom: 0; cursor: pointer; padding-right: 30px; box-sizing: border-box; border-radius: 6px; padding: 4px; }
         .text-group:active { background-color: #f8f9fa; }
         
-        /* 제목 및 토글 버튼 */
-        .item-title { 
-            font-weight: bold; font-size: 16px; margin-bottom: 4px; color: #222; 
-            display: flex; align-items: center; justify-content: flex-start; gap: 6px; 
-        }
-        
-        .toggle-btn {
-            display: inline-flex; justify-content: center; align-items: center;
-            width: 20px; height: 20px; border-radius: 4px;
-            font-size: 10px; color: #999; background: #f1f3f5;
-            transition: transform 0.2s, background 0.2s;
-        }
+        .item-title { font-weight: bold; font-size: 16px; margin-bottom: 4px; color: #222; display: flex; align-items: center; justify-content: flex-start; gap: 6px; }
+        .toggle-btn { display: inline-flex; justify-content: center; align-items: center; width: 20px; height: 20px; border-radius: 4px; font-size: 10px; color: #999; background: #f1f3f5; transition: transform 0.2s, background 0.2s; }
         .toggle-btn.open { transform: rotate(180deg); background: #4a90e2; color: white; }
 
-        .item-content { font-size: 13px; color: #666; white-space: pre-wrap; line-height: 1.5; 
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
-            transition: all 0.2s ease; margin-top: 2px;
-        }
+        .item-content { font-size: 13px; color: #666; white-space: pre-wrap; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: all 0.2s ease; margin-top: 2px; }
         .item-content.expanded { display: block; -webkit-line-clamp: unset; color: #333; }
-        
         .copy-hint { font-size: 11px; color: #4a90e2; margin-top: 4px; opacity: 0; transition: opacity 0.2s; height: 0; overflow: hidden; }
         .item:hover .copy-hint { opacity: 1; height: auto; }
 
         /* 하단 버튼 그룹 */
         .actions { display: flex; justify-content: flex-end; width: 100%; margin-top: 4px; }
-        .btn-del { 
-            background: #fff; color: #ff6b6b; border: 1px solid #ffcccc; padding: 4px 8px; 
-            border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;
-        }
+        .btn-del { background: #fff; color: #ff6b6b; border: 1px solid #ffcccc; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; }
         .btn-del:hover { background: #fff0f0; }
 
-        /* 입력창 스타일 (하단 배치용 수정) */
-        details { 
-            background: #f8f9fa; border-radius: 8px; padding: 12px; 
-            margin-top: 30px; /* 리스트와 간격 띄우기 */
-            border: 1px solid #e9ecef; 
+        /* =========================================
+           [NEW] 예약 문자 생성기 스타일
+           ========================================= */
+        .generator-box { 
+            background: #eef4fb; border-radius: 12px; padding: 15px; margin-top: 30px; border: 1px solid #dce9f6; 
         }
-        summary { color: #555; font-weight: 600; cursor: pointer; list-style: none; padding: 5px; font-size: 14px; text-align: center; }
-        summary:hover { color: #000; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; margin-top: 8px; transition: 0.2s; }
-        input:focus, textarea:focus { border-color: #4a90e2; outline: none; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1); }
-        textarea { height: 80px; resize: none; }
+        .gen-title { font-weight: bold; font-size: 16px; margin-bottom: 10px; color: #2c3e50; display: flex; align-items: center; gap: 5px; }
         
-        .btn-add { width: 100%; background: #2c3e50; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 8px; }
-        .btn-add:hover { background: #1a252f; }
+        .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+        .input-row input { flex: 1; padding: 10px; border: 1px solid #ccdbe8; border-radius: 6px; font-size: 14px; margin: 0; }
+        
+        /* 날짜/시간 선택기 스타일 */
+        input[type="datetime-local"] { font-family: inherit; color: #333; }
 
+        /* 결과 미리보기 박스 */
+        .preview-box { 
+            background: white; border: 1px solid #ddd; border-radius: 8px; padding: 12px; 
+            margin-top: 10px; min-height: 100px; font-size: 13px; line-height: 1.5; color: #444; white-space: pre-wrap;
+        }
+        
+        .btn-gen-copy { width: 100%; background: #4a90e2; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 15px; }
+        .btn-gen-copy:hover { background: #357abd; }
+
+        /* ========================================= */
+
+        /* 기존 입력창 (접어두기) */
+        details { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-top: 15px; border: 1px solid #e9ecef; }
+        summary { color: #888; font-weight: 500; cursor: pointer; list-style: none; padding: 5px; font-size: 13px; text-align: center; }
+        summary:hover { color: #555; }
+        
         /* 알림 토스트 */
         #toast { visibility: hidden; min-width: 200px; background-color: rgba(33, 37, 41, 0.95); color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 99; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(4px); }
         #toast.show { visibility: visible; animation: popUp 0.3s, fadeOut 0.5s 2.0s; }
@@ -119,8 +96,35 @@
 
         <div id="list"></div>
 
+        <div class="generator-box">
+            <div class="gen-title">📅 예약 문자 생성기</div>
+            
+            <div class="input-row">
+                <input type="datetime-local" id="resDate" onchange="updatePreview()">
+            </div>
+
+            <div class="input-row">
+                <input type="text" id="docName" placeholder="의사 이름 (예: 홍길동)" oninput="updatePreview()">
+                <input type="text" id="deptName" placeholder="진료과 (예: 소화기내과)" oninput="updatePreview()">
+            </div>
+            <div class="input-row">
+                <input type="number" id="deptNum" placeholder="전화번호 뒷자리 (예: 8234)" oninput="updatePreview()">
+            </div>
+
+            <div class="preview-box" id="previewArea">안녕하십니까? 포항성모병원입니다.
+
+(날짜 시간)
+(의사 이름) 과장님 진료 예약입니다.
+[진료과 위치 : (진료과)]
+*진료과 문의: 054-260-(번호)
+진료과 사정에 따라 대기시간이 길어질 수도 있습니다.
+
+요양기관 본인확인 강화 제도에 따라 병원 진료 시 신분증을 지참하시기 바랍니다.</div>
+
+            <button class="btn-gen-copy" onclick="copyPreview()">생성된 문자 복사하기 📄</button>
+        </div>
         <details>
-            <summary>➕ 직접 입력해서 추가하기</summary>
+            <summary>➕ (구버전) 직접 텍스트 입력해서 추가하기</summary>
             <div style="margin-top: 10px;">
                 <input type="text" id="inTitle" placeholder="제목 (예: [내과] 휴진 안내)">
                 <textarea id="inContent" placeholder="내용을 입력하세요"></textarea>
@@ -132,6 +136,56 @@
     <div id="toast">✅ 복사되었습니다!</div>
 
     <script>
+        // =========================================
+        // [NEW] 예약 문자 생성 로직
+        // =========================================
+        function updatePreview() {
+            // 1. 입력값 가져오기
+            const rawDate = document.getElementById('resDate').value;
+            const doc = document.getElementById('docName').value || '(의사 이름)';
+            const dept = document.getElementById('deptName').value || '(진료과)';
+            const num = document.getElementById('deptNum').value || '(번호)';
+
+            // 2. 날짜 포맷팅 (YYYY-MM-DDTHH:mm -> YYYY년 MM월 DD일 HH:mm)
+            let formattedDate = '(예약 일시)';
+            if (rawDate) {
+                const d = new Date(rawDate);
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const hour = String(d.getHours()).padStart(2, '0');
+                const min = String(d.getMinutes()).padStart(2, '0');
+                formattedDate = `${year}년 ${month}월 ${day}일 ${hour}:${min}`;
+            }
+
+            // 3. 템플릿 완성
+            const template = `안녕하십니까? 포항성모병원입니다.
+
+${formattedDate}
+${doc} 과장님 진료 예약입니다.
+[진료과 위치 : ${dept}]
+*진료과 문의: 054-260-${num}
+진료과 사정에 따라 대기시간이 길어질 수도 있습니다.
+
+요양기관 본인확인 강화 제도에 따라 병원 진료 시 신분증을 지참하시기 바랍니다.`;
+
+            // 4. 화면에 표시
+            document.getElementById('previewArea').innerText = template;
+        }
+
+        function copyPreview() {
+            const text = document.getElementById('previewArea').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const t = document.getElementById('toast');
+                t.className = 'show';
+                setTimeout(() => t.className = t.className.replace('show',''), 2000);
+            });
+        }
+
+        // =========================================
+        // 기존 스크립트 (리스트, 검색 등)
+        // =========================================
+        
         // 1. 고정 템플릿
         const fixedTemplates = [
             {
