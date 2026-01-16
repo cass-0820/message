@@ -13,42 +13,31 @@
         /* 기본 설정 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", sans-serif; background-color: #f0f2f5; margin: 0; padding: 15px; color: #333; }
         .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-        h2 { text-align: center; color: #1a1a1a; margin-bottom: 20px; font-weight: 800; font-size: 22px; }
+        h2 { text-align: center; color: #1a1a1a; margin-bottom: 15px; font-weight: 800; font-size: 22px; }
         
-        /* 입력창 스타일 */
-        details { background: #f8f9fa; border-radius: 8px; padding: 8px; margin-bottom: 15px; border: 1px solid #e9ecef; }
-        summary { color: #555; font-weight: 600; cursor: pointer; list-style: none; padding: 5px; font-size: 14px; }
-        summary:hover { color: #000; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; margin-top: 8px; transition: 0.2s; }
-        input:focus, textarea:focus { border-color: #4a90e2; outline: none; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1); }
-        textarea { height: 80px; resize: none; }
-        
-        .btn-add { width: 100%; background: #2c3e50; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 8px; }
-        .btn-add:hover { background: #1a252f; }
-
-        /* 검색창 (상단 고정) */
+        /* 검색창 (상단 고정 - 제목 바로 아래) */
         .search-wrapper { position: sticky; top: 0; background: white; padding-bottom: 10px; z-index: 10; border-bottom: 2px solid #f0f0f0; margin-bottom: 15px; padding-top: 5px; }
-        #search { margin: 0; background: #f8f9fa; border: none; padding: 12px; font-size: 15px; }
-        #search:focus { background: #fff; border: 1px solid #4a90e2; }
+        #search { margin: 0; background: #f8f9fa; border: none; padding: 12px; font-size: 15px; width: 100%; box-sizing: border-box; border-radius: 8px; }
+        #search:focus { background: #fff; border: 1px solid #4a90e2; outline: none; }
 
-        /* 리스트 아이템 (카드) - 슬림하게 수정 */
+        /* 리스트 아이템 (카드) - 슬림형 */
         .item { 
             position: relative;
             display: flex; 
             flex-direction: column; 
-            padding: 12px 15px; /* 내부 여백 축소 */
+            padding: 12px 15px; 
             border: 1px solid #eee; 
             border-radius: 8px; 
-            margin-bottom: 8px; /* 카드 간 간격 축소 */
+            margin-bottom: 8px; 
             background: #fff; 
             transition: all 0.2s; 
         }
         .item:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-color: #4a90e2; }
         .item.pinned { background-color: #fffde7; border-color: #ffe082; }
 
-        /* 핀 버튼 (위치 미세 조정) */
+        /* 핀 버튼 */
         .btn-pin {
-            position: absolute; top: 8px; right: 8px; /* 구석으로 더 밀착 */
+            position: absolute; top: 8px; right: 8px;
             background: transparent; border: 1px solid #eee; border-radius: 50%;
             width: 24px; height: 24px;
             font-size: 12px; color: #ccc; 
@@ -60,24 +49,18 @@
 
         /* 텍스트 영역 */
         .text-group { 
-            width: 100%; 
-            margin-bottom: 0; /* 불필요한 마진 제거 */
-            cursor: pointer;
-            padding-right: 30px; /* 핀 버튼 공간 */
-            box-sizing: border-box; 
-            border-radius: 6px;
-            padding: 4px;
+            width: 100%; margin-bottom: 0; cursor: pointer;
+            padding-right: 30px; box-sizing: border-box; 
+            border-radius: 6px; padding: 4px;
         }
         .text-group:active { background-color: #f8f9fa; }
         
-        /* 제목 한 줄 처리 및 화살표 위치 변경 */
+        /* 제목 및 토글 버튼 */
         .item-title { 
             font-weight: bold; font-size: 16px; margin-bottom: 4px; color: #222; 
-            display: flex; align-items: center; justify-content: flex-start; /* 왼쪽 정렬 */
-            gap: 6px; /* 제목과 화살표 사이 간격 */
+            display: flex; align-items: center; justify-content: flex-start; gap: 6px; 
         }
         
-        /* 토글 버튼 (화살표) */
         .toggle-btn {
             display: inline-flex; justify-content: center; align-items: center;
             width: 20px; height: 20px; border-radius: 4px;
@@ -92,17 +75,31 @@
         }
         .item-content.expanded { display: block; -webkit-line-clamp: unset; color: #333; }
         
-        /* 클릭 복사 안내 문구 */
         .copy-hint { font-size: 11px; color: #4a90e2; margin-top: 4px; opacity: 0; transition: opacity 0.2s; height: 0; overflow: hidden; }
         .item:hover .copy-hint { opacity: 1; height: auto; }
 
-        /* 하단 버튼 그룹 (삭제 버튼) */
+        /* 하단 버튼 그룹 */
         .actions { display: flex; justify-content: flex-end; width: 100%; margin-top: 4px; }
         .btn-del { 
             background: #fff; color: #ff6b6b; border: 1px solid #ffcccc; padding: 4px 8px; 
             border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;
         }
         .btn-del:hover { background: #fff0f0; }
+
+        /* 입력창 스타일 (하단 배치용 수정) */
+        details { 
+            background: #f8f9fa; border-radius: 8px; padding: 12px; 
+            margin-top: 30px; /* 리스트와 간격 띄우기 */
+            border: 1px solid #e9ecef; 
+        }
+        summary { color: #555; font-weight: 600; cursor: pointer; list-style: none; padding: 5px; font-size: 14px; text-align: center; }
+        summary:hover { color: #000; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; box-sizing: border-box; margin-top: 8px; transition: 0.2s; }
+        input:focus, textarea:focus { border-color: #4a90e2; outline: none; box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1); }
+        textarea { height: 80px; resize: none; }
+        
+        .btn-add { width: 100%; background: #2c3e50; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px; margin-top: 8px; }
+        .btn-add:hover { background: #1a252f; }
 
         /* 알림 토스트 */
         #toast { visibility: hidden; min-width: 200px; background-color: rgba(33, 37, 41, 0.95); color: #fff; text-align: center; border-radius: 50px; padding: 12px; position: fixed; z-index: 99; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.15); backdrop-filter: blur(4px); }
@@ -116,6 +113,12 @@
     <div class="container">
         <h2>🏥 병원 메시지</h2>
 
+        <div class="search-wrapper">
+            <input type="text" id="search" placeholder="🔍 검색 (약어, 진료과, 번호)...">
+        </div>
+
+        <div id="list"></div>
+
         <details>
             <summary>➕ 직접 입력해서 추가하기</summary>
             <div style="margin-top: 10px;">
@@ -124,13 +127,8 @@
                 <button class="btn-add" onclick="addItem()">저장하기</button>
             </div>
         </details>
-
-        <div class="search-wrapper">
-            <input type="text" id="search" placeholder="🔍 검색 (약어, 진료과, 번호)...">
-        </div>
-
-        <div id="list"></div>
     </div>
+    
     <div id="toast">✅ 복사되었습니다!</div>
 
     <script>
@@ -247,10 +245,6 @@
                 const div = document.createElement('div');
                 div.className = `item ${isPinned ? 'pinned' : ''}`;
                 
-                // 구조 변경: 
-                // 1. 핀 버튼 (우측 상단)
-                // 2. 텍스트 그룹 (클릭 시 복사) -> 내부에 타이틀+화살표(토글)
-                // 3. 하단 액션 (삭제 버튼만 존재)
                 div.innerHTML = `
                     <button class="btn-pin ${isPinned ? 'active' : ''}" onclick="togglePin(${item.id})">
                         ${isPinned ? '📌' : '📌'}
@@ -273,11 +267,9 @@
             });
         }
 
-        // 토글 기능 (화살표 눌렀을 때만 작동)
+        // 토글 기능
         function toggleItem(event, btnElement) {
-            event.stopPropagation(); // 부모(복사하기) 클릭 이벤트 방지
-            
-            // 버튼의 부모(title) -> 부모(text-group) 에서 content 찾기
+            event.stopPropagation();
             const textGroup = btnElement.parentElement.parentElement;
             const content = textGroup.querySelector('.item-content');
             
